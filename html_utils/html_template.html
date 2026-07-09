@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<style>
+    .page{
+      position: relative;
+      width: 75%;
+      container-type: inline-size;
+      display: none;
+    }
+
+    .page.active{
+    display: block;
+    }
+
+    /* Make the image responsive */
+    .page img {
+      width: 100%;
+      height: auto;
+    }
+
+    .page .text-btn{
+      position: absolute;
+      top: var(--top);
+      left: var(--left);
+      width: var(--width);
+      height: var(--height);
+      background: rgba(0,0,0,0.1);
+      color: white;
+      font-size: 2cqw;
+      padding: 12px 24px;
+      border: none;
+      cursor: pointer;
+      border-radius: 5px;
+      writing-mode: vertical-rl;
+      text-orientation: upright;
+      display: none;
+    }
+    .page.active .text-btn:hover {
+      background-color: black;
+      display: inline-text;
+    }
+</style>
+<body>
+    <button onclick="lastPage()">Prev. Page</button>
+    <button onclick="nextPage()">Next Page</button>
+    {{BODY}}
+<script>
+    function nextPage() {
+            const pages = document.querySelectorAll(".page");
+
+            // Find the currently active page
+            const currentIndex = Array.from(pages).findIndex(page =>
+                page.classList.contains("active")
+            );
+
+            // If no page is active, activate the first one
+            if (currentIndex === -1) {
+                pages[0].classList.add("active");
+                return;
+            }
+
+            const currentPage = pages[currentIndex];
+
+            // If this is the last page, do nothing
+            if (currentPage.classList.contains("last")) {
+                return;
+            }
+
+            // Deactivate the current page
+            pages[currentIndex].classList.remove("active");
+
+            // Activate the next page (wrap around to the first page)
+            const nextIndex = (currentIndex + 1) % pages.length;
+            pages[nextIndex].classList.add("active");
+        }
+
+    function lastPage() {
+        const pages = document.querySelectorAll(".page");
+
+        // Find the currently active page
+        const currentIndex = Array.from(pages).findIndex(page =>
+            page.classList.contains("active")
+        );
+
+        const currentPage = pages[currentIndex];
+
+        // If this is the first page, do nothing
+        if (currentPage.classList.contains("first")) {
+            return;
+        }
+
+        // Deactivate the current page
+        pages[currentIndex].classList.remove("active");
+
+        // Activate the prev page (wrap around to the last page)
+        const nextIndex = (currentIndex - 1) % pages.length;
+        pages[nextIndex].classList.add("active");
+    }
+        nextPage()
+</script>
+</body>
+</html>

@@ -1,5 +1,7 @@
 from pathlib import Path
+import os
 
+HTML_UTILS_FOLDER: Path = Path(__file__).parent
 class Textbox:
     """Class containing details of the textbox on a page
     Attributes:
@@ -29,73 +31,60 @@ class Textbox:
         self.text = text
 
 class Page:
-    textboxes: list[Textbox]
+    textboxes: list[Textbox] = []
     img_filepath: Path
     page_num: int
-    buttons_css: str
     page_html: str
+    page_class: str
 
     def __init__(
             self,
-            img_filepath: Path,
-            page_num: int
+            img_filepath: Path|str,
+            page_num: int,
+            page_class: str
     ):
         self.img_filepath = img_filepath
         self.page_num = page_num
+        self.page_class = page_class
 
-    def make_textboxes_css(
-            self
-    ) -> None:
-        """
-        Constructs the CSS required to style buttons on this page. Shoves that into the
-        buttons_css atttribute of this object.
-        :return:
-        """
-        button_css: str = ""
-        count: int = 0
-        for textbox in self.textboxes:
-            count += 1
-            button_css += f"""
-                    .container .btn-page{self.page_num}-{count} {{
-                      position: absolute;
-                      top: {textbox.top}%;
-                      left: {textbox.left}%;
-                      width: {textbox.width}%;
-                      height: {textbox.height}%;
-                      background: rgba(0,0,0,0.1);
-                      color: white;
-                      font-size: 2cqw;
-                      padding: 12px 24px;
-                      border: none;
-                      cursor: pointer;
-                      border-radius: 5px;
-                      writing-mode: vertical-rl;
-                      text-orientation: upright;
-                      opacity: 0;
-                    }}
-                    .container .btn-page{self.page_num}-{count}:hover {{
-                      background-color: black;
-                      opacity: 100;
-                    }}
-                    """
-            textbox.btn_class = f"btn-page{self.page_num}-{count}"
-        self.buttons_css = button_css
-
-    def make_page_html(self) -> None:
+    def __make_page_html(self) -> None:
         """
         Constructs the HTML of a page, shoves it into the page_html attribute of this object.
         :return:
         """
         page_html: str = f"""
-        <div class="container" id="page-{self.page_num}">
+        <div class="{self.page_class}" id="page{self.page_num}">
         <img src="{self.img_filepath}" alt="Snow">
         """
         for textbox in self.textboxes:
             page_html += f"""
-            <button class="{textbox.btn_class}">{textbox.text}</button>
+            <button class="text-btn"
+                    style="--top:{textbox.top}%;--left:{textbox.left}%;--height:{textbox.height}%;--width:{textbox.width};">
+                {textbox.text}
+            </button>
             """
+        page_html+="</div>"
         self.page_html = page_html
 
+    def make_page_html_css(self) -> None:
+        self.__make_page_html()
 
-def make_html_file() -> str:
-    ...
+    def set_page_class(self, page_class: str):
+        self.page_class = page_class
+
+def make_html_file(
+        pages: list[Page],
+        template: str|Path = f"{HTML_UTILS_FOLDER}/html_template.html"
+) -> str:
+    html_body: str = ""
+    for i in range(len(pages)):
+        if i == len(pages) - 1:
+            pages[i].set_page_class("page last")
+        elif i == 0:
+            pages[i].set_page_class("page first")
+        pages[i].make_page_html_css()
+        html_body += pages[i].page_html
+    with open(template, "r") as html_template:
+        template: str = html_template.read()
+        template = template.replace("{{BODY}}", html_body)
+    return template
