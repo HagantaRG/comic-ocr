@@ -3,8 +3,11 @@ import numpy as np
 def __compare_regions(
         r1: list[int],
         r2: list[int],
+        padding: int = 0,
 ) -> bool:
-    return (r1[1] > r2[0] and r1[0] < r2[1]) and (r1[3] > r2[2] and r1[2] < r2[3])
+    ef_r1: list[int] = [r1[0]-padding, r1[1]+padding, r1[2]-padding, r1[3]+padding]
+    ef_r2: list[int] = [r2[0]-padding, r2[1]+padding, r2[2]-padding, r2[3]+padding]
+    return (ef_r1[1] > ef_r2[0] and ef_r1[0] < ef_r2[1]) and (ef_r1[3] > ef_r2[2] and ef_r1[2] < ef_r2[3])
 
 def __merge_regions(
         r1: list[int],
@@ -24,6 +27,7 @@ def merge_textboxes_easyocr(
         padding: int = 0
 ) -> list[list[int]]:
     """
+    :param padding: Leniency for region merging. Larger number means more regions likely to be merged.
     :param region_list: A list of regions where text is detected from easyOCR. This takes the form
     [x_min, x_max, y_min, y_max]
     :return: A list where close/overlapping regions have been merged into a larger box.
@@ -49,7 +53,7 @@ def merge_textboxes_easyocr(
                 if counter_2 == counter_1:
                     continue
                 r2 = last_region_list[counter_2]
-                if __compare_regions(r1, r2):
+                if __compare_regions(r1, r2, padding):
                     new_region: list[int] = __merge_regions(r1, r2)
                     merged_regions.append(new_region)
                     leftover_regions: list[list[int]] = [

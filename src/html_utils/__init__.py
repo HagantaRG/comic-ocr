@@ -1,5 +1,5 @@
 from pathlib import Path
-import os
+import svg
 
 HTML_UTILS_FOLDER: Path = Path(__file__).parent
 class Textbox:
@@ -47,7 +47,7 @@ class Page:
         self.page_num = page_num
         self.page_class = page_class
 
-    def __make_page_html(self) -> None:
+    def make_page_html(self) -> None:
         """
         Constructs the HTML of a page, shoves it into the page_html attribute of this object.
         :return:
@@ -59,18 +59,16 @@ class Page:
         for textbox in self.textboxes:
             page_html += f"""
             <button class="text-btn"
-                    style="--top:{textbox.top}%;--left:{textbox.left}%;--height:{textbox.height}%;--width:{textbox.width};">
-                {textbox.text}
+                    style="--top:{textbox.top}%;--left:{textbox.left}%;--height:{textbox.height}%;--width:{textbox.width}%;">
+                <span>{textbox.text}</span>
             </button>
             """
         page_html+="</div>"
         self.page_html = page_html
 
-    def make_page_html_css(self) -> None:
-        self.__make_page_html()
-
     def set_page_class(self, page_class: str):
         self.page_class = page_class
+
 
 def make_html_file(
         pages: list[Page],
@@ -82,7 +80,7 @@ def make_html_file(
             pages[i].set_page_class("page last")
         elif i == 0:
             pages[i].set_page_class("page first")
-        pages[i].make_page_html_css()
+        pages[i].make_page_html()
         html_body += pages[i].page_html
     with open(template, "r") as html_template:
         template: str = html_template.read()

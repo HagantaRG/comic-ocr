@@ -87,5 +87,5 @@ http-client.private.env.json
 .idea/**/copilot.data.migration.*.xml
 
 # ------------------------------------------------------
-/test-pics
-/outputs
+/src/test-pics
+/src/outputs
