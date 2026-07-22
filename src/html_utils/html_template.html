@@ -24,24 +24,29 @@
 
     .page .text-btn{
       position: absolute;
+      container-type: size;
+      padding: 8px;
       top: var(--top);
       left: var(--left);
       width: var(--width);
       height: var(--height);
-      background: rgba(0,0,0,0.1);
-      color: white;
-      font-size: 2cqw;
-      padding: 12px 24px;
-      border: none;
-      cursor: pointer;
-      border-radius: 5px;
-      writing-mode: vertical-rl;
-      text-orientation: upright;
-      display: none;
+      opacity: 0;
+      display: flex;
+      overflow: hidden;
+      box-sizing: content-box;
     }
     .page.active .text-btn:hover {
-      background-color: black;
-      display: inline-text;
+      opacity: 1;
+    }
+    .page .text-btn span{
+      line-height: 1.05;
+      white-space: normal;
+      overflow-wrap: anywhere;
+      writing-mode: vertical-rl;
+      text-orientation: upright;
+      width: auto;
+      height: 100%;
+	  color: black;
     }
 </style>
 <body>
@@ -76,8 +81,12 @@
             // Activate the next page (wrap around to the first page)
             const nextIndex = (currentIndex + 1) % pages.length;
             pages[nextIndex].classList.add("active");
+            const event = new Event("newpage");
+            window.dispatchEvent(event);
+            //
         }
-
+</script>
+<script>
     function lastPage() {
         const pages = document.querySelectorAll(".page");
 
@@ -99,8 +108,74 @@
         // Activate the prev page (wrap around to the last page)
         const nextIndex = (currentIndex - 1) % pages.length;
         pages[nextIndex].classList.add("active");
+
+        const event = new Event("newpage");
+        window.dispatchEvent(event);
     }
-        nextPage()
+</script>
+<script>
+    function fitTextToButton(button, options = {}) {
+      const text = button.querySelector(".text-btn span");
+
+      if (!text) {
+        return;
+      }
+
+      const {
+        minFontSize = 4,
+        maxFontSize = 100,
+        precision = 0.1
+      } = options;
+
+      const buttonStyles = getComputedStyle(button);
+
+      const availableWidth =
+        button.clientWidth -
+        parseFloat(buttonStyles.paddingLeft) -
+        parseFloat(buttonStyles.paddingRight);
+
+      const availableHeight =
+        button.clientHeight -
+        parseFloat(buttonStyles.paddingTop) -
+        parseFloat(buttonStyles.paddingBottom);
+
+      text.style.width = `${availableWidth}px`;
+      text.style.fontSize = `${maxFontSize}px`;
+
+      let low = minFontSize;
+      let high = maxFontSize;
+      let bestSize = minFontSize;
+
+      while (high - low > precision) {
+        const middle = (low + high) / 2;
+
+        text.style.fontSize = `${middle}px`;
+
+        const fitsWidth = text.scrollWidth <= availableWidth + 0.5;
+        const fitsHeight = text.scrollHeight <= availableHeight + 0.5;
+
+        if (fitsWidth && fitsHeight) {
+          bestSize = middle;
+          low = middle;
+        } else {
+          high = middle;
+        }
+      }
+
+      text.style.fontSize = `${bestSize}px`;
+    }
+    function resizeAllButtonText() {
+      document.querySelectorAll(".text-btn").forEach((button) => {
+        fitTextToButton(button, {
+          minFontSize: 4,
+          maxFontSize: 100,
+          precision: 0.1
+        });
+      });
+    }
+    window.addEventListener("resize", resizeAllButtonText);
+    window.addEventListener("newpage",resizeAllButtonText);
+    nextPage();
 </script>
 </body>
 </html>
