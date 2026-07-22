@@ -33,14 +33,6 @@ def merge_textboxes_easyocr(
     :return: A list where close/overlapping regions have been merged into a larger box.
     """
     """
-    How am I going to do this?
-    First, comparing any two regions (r1 and r2). To see if the regions overlap, I will have to:
-    Check if any of the lines intersect.
-    Line segments:
-    
-    if xmax_r1 > xmin_r2 and xmin_r1 < xmax_r2
-    AND ymax_r1 > ymin_r2 and ymin_r1 < ymax_r2
-
     """
     all_merged: bool = False
     last_region_list: list[list[int]] = region_list
