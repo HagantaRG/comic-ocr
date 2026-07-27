@@ -1,6 +1,5 @@
 import os
 from pathlib import Path
-from threading import Thread
 from typing import Final
 from tqdm import tqdm
 
