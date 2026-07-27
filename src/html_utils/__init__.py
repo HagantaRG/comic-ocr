@@ -71,14 +71,14 @@ class Page:
 
 
 def make_html_file(
-        pages: list[Page],
+        pages: dict[int, Page],
         template: str|Path = f"{HTML_UTILS_FOLDER}/html_template.html"
 ) -> str:
     html_body: str = ""
-    for i in range(len(pages)):
-        if i == len(pages) - 1:
+    for i in range(1, len(pages.keys())+1):
+        if i == len(pages):
             pages[i].set_page_class("page last")
-        elif i == 0:
+        elif i == 1:
             pages[i].set_page_class("page first")
         pages[i].make_page_html()
         html_body += pages[i].page_html

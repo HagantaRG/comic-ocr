@@ -1,16 +1,15 @@
-import os
 from datetime import datetime, timedelta
 from pathlib import Path
 
-from PIL import Image, ImageDraw
+from PIL import Image
 from easyocr import Reader
 from manga_ocr import MangaOcr
 
-from src.html_utils import Textbox, Page, make_html_file
+from src.html_utils import Textbox, Page
 from src.img_utils import merge_textboxes_easyocr
 
 def process_page(
-        manga: list[Page],
+        manga: dict[int, Page],
         filepath: Path,
         detector: Reader,
         recogniser: MangaOcr,
@@ -64,4 +63,4 @@ def process_page(
             textboxes.append(textbox)
             page.textboxes = textboxes
         print(f"Recog took {recog_time.total_seconds()}s for page {page_num}")
-        manga.append(page)
+        manga[page_num] = page
