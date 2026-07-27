@@ -15,11 +15,8 @@ def process_page(
         recogniser: MangaOcr,
         page_num: int
 ) -> None:
-    start = datetime.now()
+
     result = detector.detect(str(filepath))
-    end = datetime.now()
-    delta: timedelta = end - start
-    print(f"Detection took {delta.total_seconds()}s for page {page_num}")
     with Image.open(filepath) as img:
         textboxes: list[Textbox] = []
         width, height = img.size
@@ -34,7 +31,6 @@ def process_page(
             result[0][0],
             padding=1
         )
-        recog_time: delta = timedelta(seconds=0)
         for item in merged_regions:
             count += 1
             nums: list[int] = []
@@ -50,7 +46,6 @@ def process_page(
             start = datetime.now()
             text: str = recogniser(region)
             end = datetime.now()
-            recog_time += end - start
             textbox: Textbox = Textbox(
                 top=round(nums[2] / height * 100),
                 left=round(nums[0] / width * 100),
@@ -60,5 +55,4 @@ def process_page(
             )
             textboxes.append(textbox)
             page.textboxes = textboxes
-        print(f"Recog took {recog_time.total_seconds()}s for page {page_num}")
         manga[page_num] = page
