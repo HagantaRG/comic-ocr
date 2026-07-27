@@ -9,7 +9,7 @@ page_num = 0
 page_batch: int = 5
 batches: list = [[]]
 manga: dict[int, Page] = {}
-processing_files: list[str] = file_list[2:8]
+processing_files: list[str] = file_list[2:16]
 for num, file in enumerate(processing_files):
     path = Path(f"test-pics/temporary/{file}")
     manga[num + 1] = Page(
