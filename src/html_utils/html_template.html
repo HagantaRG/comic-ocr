@@ -46,6 +46,14 @@
       margin: 0;
     }
 
+    .view-toggle.text-toggle {
+      top: 3.35rem;
+    }
+
+    body.show-text-buttons .page .text-btn {
+      opacity: 1 !important;
+    }
+
     .page{
       position: relative;
       width: min(95vw, 1600px);
@@ -272,6 +280,9 @@
       display: flex;
       overflow: hidden;
       box-sizing: content-box;
+      user-select: text;
+      -webkit-user-select: text;
+      cursor: text;
     }
     .page.active .text-btn:hover {
       opacity: 1;
@@ -284,6 +295,8 @@
       text-orientation: upright;
       width: auto;
       height: 100%;
+      user-select: text;
+      -webkit-user-select: text;
 	  color: black;
     }
 </style>
@@ -292,10 +305,18 @@
       <input type="checkbox" id="two-page-toggle">
       Two-page spread
     </label>
+    <label class="view-toggle text-toggle" for="text-buttons-toggle">
+      <input type="checkbox" id="text-buttons-toggle">
+      Show text buttons
+    </label>
     {{BODY}}
 <script>
     function isTwoPageMode() {
       return document.body.classList.contains("two-page-mode");
+    }
+
+    function updateTextButtonVisibility(enabled) {
+      document.body.classList.toggle("show-text-buttons", enabled);
     }
 
     function getPages() {
@@ -701,6 +722,10 @@
     twoPageToggle.addEventListener("change", (event) => {
       updateViewMode(event.target.checked);
     });
+    const textButtonsToggle = document.getElementById("text-buttons-toggle");
+    textButtonsToggle.addEventListener("change", (event) => {
+      updateTextButtonVisibility(event.target.checked);
+    });
     window.addEventListener("keydown", (event) => {
       if (event.key === "ArrowLeft" || event.key === "a" || event.key === "A") {
         event.preventDefault();
@@ -711,6 +736,7 @@
         }
     });
     updateViewMode(false);
+    updateTextButtonVisibility(false);
 </script>
 </body>
 </html>
