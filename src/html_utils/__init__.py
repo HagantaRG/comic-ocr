@@ -54,6 +54,11 @@ class Page:
         """
         page_html: str = f"""
         <div class="{self.page_class}" id="page{self.page_num}">
+        <button class="page-nav prev" onclick="lastPage()">Prev. Page</button>
+        <button class="page-nav next" onclick="nextPage()">Next Page</button>
+        <div class="zoom-hint">Ctrl + wheel to zoom</div>
+        <div class="page-content">
+        <div class="page-content-inner">
         <img src="{self.img_filepath}" alt="Snow">
         """
         for textbox in self.textboxes:
@@ -63,7 +68,11 @@ class Page:
                 <span>{textbox.text}</span>
             </button>
             """
-        page_html+="</div>"
+        page_html+="""
+        </div>
+        </div>
+        </div>
+        """
         self.page_html = page_html
 
     def set_page_class(self, page_class: str):
@@ -76,13 +85,28 @@ def make_html_file(
 ) -> str:
     html_body: str = ""
     for i in range(1, len(pages.keys())+1):
+        if (i - 1) % 2 == 0:
+            html_body += """
+            <div class="spread">
+            <button class="spread-nav prev" onclick="lastPage()">Prev. Page</button>
+            <button class="spread-nav next" onclick="nextPage()">Next Page</button>
+            <div class="spread-hint">Ctrl + wheel to zoom</div>
+            <div class="spread-scroll">
+            <div class="spread-content">
+            """
         if i == len(pages):
             pages[i].set_page_class("page last")
         elif i == 1:
             pages[i].set_page_class("page first")
         pages[i].make_page_html()
         html_body += pages[i].page_html
-    with open(template, "r") as html_template:
+        if (i - 1) % 2 == 1 or i == len(pages):
+            html_body += """
+            </div>
+            </div>
+            </div>
+            """
+    with open(template, "r", encoding="utf-8") as html_template:
         template: str = html_template.read()
         template = template.replace("{{BODY}}", html_body)
     return template

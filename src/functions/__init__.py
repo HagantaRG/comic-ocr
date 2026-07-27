@@ -32,7 +32,7 @@ def process_page(
         )
         merged_regions: list[list[int]] = merge_textboxes_easyocr(
             result[0][0],
-            padding=int(height * 0.01)
+            padding=1
         )
         recog_time: delta = timedelta(seconds=0)
         for item in merged_regions:
@@ -45,9 +45,7 @@ def process_page(
             box_height: int = nums[3] - nums[2]
             percent_width: int = round(box_width / width * 100)
             percent_height: int = round(box_height / height * 100)
-            # drawer = ImageDraw.Draw(img)
-            # region_list = [nums[0], nums[2], nums[1], nums[3]]
-            # drawer.rectangle(region_list, outline='red')
+
             region = img.crop((nums[0], nums[2], nums[1], nums[3]))
             start = datetime.now()
             text: str = recogniser(region)

@@ -5,9 +5,50 @@
     <title>Title</title>
 </head>
 <style>
+    @import url('https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap');
+
+    body {
+      margin: 0;
+      min-height: 100vh;
+      display: grid;
+      place-items: center;
+      padding: 1rem;
+      box-sizing: border-box;
+      background: #2b2b2b;
+      font-family: 'Roboto', sans-serif;
+    }
+
+    body.two-page-mode {
+      display: block;
+      place-items: initial;
+      overflow-y: auto;
+      padding-top: 3.5rem;
+    }
+
+    .view-toggle {
+      position: fixed;
+      top: 0.75rem;
+      left: 0.75rem;
+      z-index: 40;
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      padding: 0.45rem 0.7rem;
+      border-radius: 999px;
+      background: rgba(245, 245, 245, 0.94);
+      border: 1px solid #666;
+      color: #222;
+      box-shadow: 0 1px 6px rgba(0, 0, 0, 0.22);
+      user-select: none;
+    }
+
+    .view-toggle input {
+      margin: 0;
+    }
+
     .page{
       position: relative;
-      width: 75%;
+      width: min(95vw, 1600px);
       container-type: inline-size;
       display: none;
     }
@@ -16,8 +57,205 @@
     display: block;
     }
 
-    /* Make the image responsive */
-    .page img {
+    .spread {
+      display: none;
+      position: relative;
+    }
+
+    .spread.active {
+      display: block;
+    }
+
+    body.two-page-mode .page {
+      display: block;
+      margin: 0;
+      width: auto;
+      flex: 1 1 0;
+      min-width: 0;
+    }
+
+    body.two-page-mode .spread {
+      width: min(95vw, 1800px);
+      margin: 0 auto;
+    }
+
+    body.two-page-mode .spread.active {
+      display: block;
+      margin: 0 auto 1rem;
+      padding: 0;
+      background: transparent;
+      border: none;
+      border-radius: 0;
+      box-shadow: none;
+      overflow: visible;
+    }
+
+    body.two-page-mode .page-nav {
+      display: none;
+    }
+
+    .spread-nav {
+      position: absolute;
+      top: 50%;
+      transform: translateY(-50%);
+      z-index: 25;
+      padding: 0.75rem 0.5rem;
+      border: 1px solid #666;
+      background: rgba(245, 245, 245, 0.94);
+      color: #111;
+      cursor: pointer;
+      user-select: none;
+      display: none;
+    }
+
+    body.two-page-mode .spread-nav {
+      display: block;
+    }
+
+    .spread-nav.prev {
+      left: 0;
+      border-left: none;
+      border-radius: 0 10px 10px 0;
+    }
+
+    .spread-nav.next {
+      right: 0;
+      border-right: none;
+      border-radius: 10px 0 0 10px;
+    }
+
+    .spread-hint {
+      position: absolute;
+      top: -2.1rem;
+      left: 50%;
+      transform: translateX(-50%);
+      z-index: 30;
+      display: none;
+      width: fit-content;
+      padding: 0.4rem 0.7rem;
+      border-radius: 999px;
+      background: rgba(245, 245, 245, 0.94);
+      border: 1px solid #666;
+      color: #222;
+      font-size: 0.85rem;
+      pointer-events: none;
+      box-shadow: 0 1px 6px rgba(0, 0, 0, 0.22);
+    }
+
+    body.two-page-mode .spread-hint {
+      display: block;
+    }
+
+    body.two-page-mode .zoom-hint {
+      display: none;
+    }
+
+    .page-content {
+      position: relative;
+      width: 100%;
+      height: 80vh;
+      margin: 0;
+      overflow: auto;
+      box-sizing: border-box;
+      background: #f4f4f4;
+      border: 1px solid #666;
+      border-radius: 10px;
+      box-shadow: 0 4px 14px rgba(0, 0, 0, 0.3);
+    }
+
+    body.two-page-mode .page-content {
+      height: auto;
+      overflow: visible;
+      border: none;
+      background: transparent;
+      box-shadow: none;
+      border-radius: 0;
+    }
+
+    .spread-scroll {
+      display: block;
+    }
+
+    body.two-page-mode .spread-scroll {
+      display: block;
+      height: 80vh;
+      overflow: auto;
+      box-sizing: border-box;
+      background: #f4f4f4;
+      border: 1px solid #666;
+      border-radius: 10px;
+      box-shadow: 0 4px 14px rgba(0, 0, 0, 0.3);
+    }
+
+    .spread-content {
+      display: block;
+    }
+
+    body.two-page-mode .spread-content {
+      display: flex;
+      flex-direction: row-reverse;
+      gap: 0;
+      align-items: flex-start;
+      justify-content: center;
+      width: fit-content;
+      min-width: 100%;
+      min-height: 100%;
+    }
+
+    .page-nav {
+      position: absolute;
+      top: 50%;
+      transform: translateY(-50%);
+      z-index: 20;
+      padding: 0.75rem 0.5rem;
+      border: 1px solid #666;
+      background: rgba(245, 245, 245, 0.94);
+      color: #111;
+      cursor: pointer;
+      user-select: none;
+    }
+
+    .page-nav.prev {
+      left: 0;
+      border-left: none;
+      border-radius: 0 10px 10px 0;
+    }
+
+    .page-nav.next {
+      right: 0;
+      border-right: none;
+      border-radius: 10px 0 0 10px;
+    }
+
+    .zoom-hint {
+      position: static;
+      display: block;
+      width: fit-content;
+      margin: 0 0 0.6rem auto;
+      z-index: 20;
+      padding: 0.4rem 0.7rem;
+      border-radius: 999px;
+      background: rgba(245, 245, 245, 0.94);
+      border: 1px solid #666;
+      color: #222;
+      font-size: 0.85rem;
+      pointer-events: none;
+      box-shadow: 0 1px 6px rgba(0, 0, 0, 0.22);
+    }
+
+    .page-content-inner {
+      position: relative;
+      width: calc(100% * var(--zoom, 1));
+      min-width: 100%;
+    }
+
+    .page {
+      margin: 0 auto;
+    }
+
+    /* Make the image responsive inside the viewport */
+    .page-content-inner img {
+      display: block;
       width: 100%;
       height: auto;
     }
@@ -39,7 +277,7 @@
       opacity: 1;
     }
     .page .text-btn span{
-      line-height: 1.05;
+      line-height: var(--text-line-height, 1.35);
       white-space: normal;
       overflow-wrap: anywhere;
       writing-mode: vertical-rl;
@@ -50,67 +288,232 @@
     }
 </style>
 <body>
-    <button onclick="lastPage()">Prev. Page</button>
-    <button onclick="nextPage()">Next Page</button>
+    <label class="view-toggle" for="two-page-toggle">
+      <input type="checkbox" id="two-page-toggle">
+      Two-page spread
+    </label>
     {{BODY}}
 <script>
+    function isTwoPageMode() {
+      return document.body.classList.contains("two-page-mode");
+    }
+
+    function getPages() {
+      return Array.from(document.querySelectorAll(".page"));
+    }
+
+    function getSpreads() {
+      return Array.from(document.querySelectorAll(".spread"));
+    }
+
+    function getActivePageIndex(pages) {
+      return pages.findIndex((page) => page.classList.contains("active"));
+    }
+
+    function clearActivePages(pages) {
+      pages.forEach((page) => page.classList.remove("active"));
+    }
+
+    function getActiveSpreadIndex(spreads) {
+      return spreads.findIndex((spread) => spread.classList.contains("active"));
+    }
+
+    function clearActiveSpreads(spreads) {
+      spreads.forEach((spread) => spread.classList.remove("active"));
+    }
+
+    function getSpreadForPage(page) {
+      return page ? page.closest(".spread") : null;
+    }
+
+    function getActiveSpread() {
+      return document.querySelector(".spread.active");
+    }
+
+    function getActiveSpreadScroll() {
+      const activeSpread = getActiveSpread();
+      return activeSpread ? activeSpread.querySelector(".spread-scroll") : null;
+    }
+
+    function resetActiveSpreadScroll() {
+      const scroll = getActiveSpreadScroll();
+      if (!scroll) {
+        return;
+      }
+      scroll.scrollLeft = 0;
+      scroll.scrollTop = 0;
+    }
+
+    function getSpreadStartIndex(pages) {
+      const activeIndex = getActivePageIndex(pages);
+      if (activeIndex === -1) {
+        return 0;
+      }
+      return activeIndex - (activeIndex % 2);
+    }
+
+    function setSingleActivePage(pages, index) {
+      if (!pages[index]) {
+        return;
+      }
+      clearActivePages(pages);
+      pages[index].classList.add("active");
+      const spread = getSpreadForPage(pages[index]);
+      if (spread) {
+        clearActiveSpreads(getSpreads());
+        spread.classList.add("active");
+      }
+    }
+
+    function activateSinglePageByOffset(pages, offset) {
+      const currentIndex = getActivePageIndex(pages);
+      const nextIndex = currentIndex === -1 ? 0 : currentIndex + offset;
+      if (!pages[nextIndex]) {
+        return;
+      }
+      setSingleActivePage(pages, nextIndex);
+    }
+
+    function setActiveSpreadByIndex(spreads, spreadIndex) {
+      if (!spreads[spreadIndex]) {
+        return;
+      }
+      const pages = getPages();
+      clearActivePages(pages);
+      clearActiveSpreads(spreads);
+
+      const spread = spreads[spreadIndex];
+      spread.classList.add("active");
+      spread.querySelectorAll(".page").forEach((page) => {
+        page.classList.add("active");
+      });
+    }
+
+    function scrollActiveTargetIntoView(twoPageEnabled) {
+      if (twoPageEnabled) {
+        resetActiveSpreadScroll();
+        return;
+      }
+
+      const pages = getPages();
+      if (!pages.length) {
+        return;
+      }
+
+      const activeIndex = getActivePageIndex(pages);
+      if (activeIndex === -1) {
+        return;
+      }
+
+      const target = pages[activeIndex];
+
+      target.scrollIntoView({
+        block: twoPageEnabled ? "start" : "center",
+        inline: "nearest"
+      });
+    }
+
+    function activateSpreadByOffset(spreads, offset) {
+      const currentSpreadIndex = getActiveSpreadIndex(spreads);
+      const nextSpreadIndex = currentSpreadIndex === -1 ? 0 : currentSpreadIndex + offset;
+      if (!spreads[nextSpreadIndex]) {
+        return false;
+      }
+      setActiveSpreadByIndex(spreads, nextSpreadIndex);
+      return true;
+    }
+
+    function updateViewMode(twoPageEnabled) {
+      document.body.classList.toggle("two-page-mode", twoPageEnabled);
+      const pages = getPages();
+      const spreads = getSpreads();
+      if (!pages.length) {
+        return;
+      }
+
+      if (twoPageEnabled) {
+        setActiveSpreadByIndex(spreads, Math.floor(getSpreadStartIndex(pages) / 2));
+      } else {
+        clearActiveSpreads(spreads);
+        const activeIndex = getActivePageIndex(pages);
+        setSingleActivePage(pages, activeIndex === -1 ? 0 : activeIndex);
+      }
+
+      scrollActiveTargetIntoView(twoPageEnabled);
+      resizeAllButtonText();
+    }
+
     function nextPage() {
-            const pages = document.querySelectorAll(".page");
+            const pages = getPages();
+            const spreads = getSpreads();
+            if (!pages.length) {
+              return;
+            }
 
-            // Find the currently active page
-            const currentIndex = Array.from(pages).findIndex(page =>
-                page.classList.contains("active")
-            );
+            if (isTwoPageMode()) {
+              if (!activateSpreadByOffset(spreads, 1)) {
+                return;
+              }
+              const event = new Event("newpage");
+              window.dispatchEvent(event);
+              resetActiveSpreadScroll();
+              return;
+            }
 
-            // If no page is active, activate the first one
+            const currentIndex = getActivePageIndex(pages);
             if (currentIndex === -1) {
-                pages[0].classList.add("active");
+                setSingleActivePage(pages, 0);
+            } else if (pages[currentIndex].classList.contains("last")) {
                 return;
+            } else {
+                activateSinglePageByOffset(pages, 1);
             }
 
-            const currentPage = pages[currentIndex];
-
-            // If this is the last page, do nothing
-            if (currentPage.classList.contains("last")) {
-                return;
-            }
-
-            // Deactivate the current page
-            pages[currentIndex].classList.remove("active");
-
-            // Activate the next page (wrap around to the first page)
-            const nextIndex = (currentIndex + 1) % pages.length;
-            pages[nextIndex].classList.add("active");
             const event = new Event("newpage");
             window.dispatchEvent(event);
-            //
+            scrollActiveTargetIntoView(false);
         }
 </script>
 <script>
     function lastPage() {
-        const pages = document.querySelectorAll(".page");
+        const pages = getPages();
+        const spreads = getSpreads();
+        if (!pages.length) {
+          return;
+        }
 
-        // Find the currently active page
-        const currentIndex = Array.from(pages).findIndex(page =>
-            page.classList.contains("active")
-        );
+        if (isTwoPageMode()) {
+          const currentSpreadIndex = getActiveSpreadIndex(spreads);
+          if (currentSpreadIndex <= 0) {
+            return;
+          }
 
-        const currentPage = pages[currentIndex];
+          if (!activateSpreadByOffset(spreads, -1)) {
+            return;
+          }
+          const event = new Event("newpage");
+          window.dispatchEvent(event);
+          resetActiveSpreadScroll();
+          return;
+        }
 
-        // If this is the first page, do nothing
-        if (currentPage.classList.contains("first")) {
+        const currentIndex = getActivePageIndex(pages);
+        if (currentIndex === -1) {
+            setSingleActivePage(pages, 0);
+            const event = new Event("newpage");
+            window.dispatchEvent(event);
+            scrollActiveTargetIntoView(false);
             return;
         }
 
-        // Deactivate the current page
-        pages[currentIndex].classList.remove("active");
+        if (pages[currentIndex].classList.contains("first")) {
+            return;
+        }
 
-        // Activate the prev page (wrap around to the last page)
-        const nextIndex = (currentIndex - 1) % pages.length;
-        pages[nextIndex].classList.add("active");
-
+        activateSinglePageByOffset(pages, -1);
         const event = new Event("newpage");
         window.dispatchEvent(event);
+        scrollActiveTargetIntoView(false);
     }
 </script>
 <script>
@@ -140,6 +543,7 @@
         parseFloat(buttonStyles.paddingBottom);
 
       text.style.width = `${availableWidth}px`;
+      text.style.setProperty("--text-line-height", "1.12");
       text.style.fontSize = `${maxFontSize}px`;
 
       let low = minFontSize;
@@ -163,6 +567,23 @@
       }
 
       text.style.fontSize = `${bestSize}px`;
+
+      const rawText = (text.textContent || "").replace(/\s+/g, "");
+      const punctuationMatches = rawText.match(/[。、，．・「」『』（）\(\)！？…—‥]/g) || [];
+      const punctuationDensity = rawText.length > 0
+        ? punctuationMatches.length / rawText.length
+        : 0;
+      const renderedColumns = Math.max(1, Math.ceil(text.scrollWidth / Math.max(1, availableWidth)));
+      const adaptiveLineHeight = Math.min(
+        1.62,
+        Math.max(
+          1.12,
+          1.12 +
+            Math.min((renderedColumns - 1) * 0.09, 0.38) +
+            Math.min(punctuationDensity * 0.25, 0.12)
+        )
+      );
+      text.style.setProperty("--text-line-height", adaptiveLineHeight.toFixed(2));
     }
     function resizeAllButtonText() {
       document.querySelectorAll(".text-btn").forEach((button) => {
@@ -175,7 +596,121 @@
     }
     window.addEventListener("resize", resizeAllButtonText);
     window.addEventListener("newpage",resizeAllButtonText);
-    nextPage();
+    function getViewportContent(viewport) {
+      return viewport ? viewport.querySelector(".page-content-inner") : null;
+    }
+
+    function setViewportZoom(viewport, zoom) {
+      const content = getViewportContent(viewport);
+      if (!content) {
+        return;
+      }
+      const clampedZoom = Math.min(3, Math.max(0.5, zoom));
+      content.style.setProperty("--zoom", clampedZoom);
+      return clampedZoom;
+    }
+
+    function handleViewportWheel(event) {
+      if (isTwoPageMode()) {
+        return;
+      }
+      if (!event.ctrlKey) {
+        return;
+      }
+
+      const viewport = event.currentTarget;
+      const content = getViewportContent(viewport);
+      if (!content) {
+        return;
+      }
+
+      const currentZoom = parseFloat(getComputedStyle(content).getPropertyValue("--zoom")) || 1;
+      const zoomFactor = event.deltaY > 0 ? 0.9 : 1.1;
+      const nextZoom = Math.min(3, Math.max(0.5, currentZoom * zoomFactor));
+
+      if (nextZoom === currentZoom) {
+        return;
+      }
+
+      const rect = viewport.getBoundingClientRect();
+      const cursorX = event.clientX - rect.left;
+      const cursorY = event.clientY - rect.top;
+
+      const anchorX = (viewport.scrollLeft + cursorX) / currentZoom;
+      const anchorY = (viewport.scrollTop + cursorY) / currentZoom;
+
+      setViewportZoom(viewport, nextZoom);
+      viewport.scrollLeft = anchorX * nextZoom - cursorX;
+      viewport.scrollTop = anchorY * nextZoom - cursorY;
+
+      event.preventDefault();
+    }
+
+    function handleSpreadWheel(event) {
+      if (!isTwoPageMode() || !event.ctrlKey) {
+        return;
+      }
+
+      const scroll = event.currentTarget;
+      const activeSpread = scroll.closest(".spread");
+      if (!activeSpread || !activeSpread.classList.contains("active")) {
+        return;
+      }
+
+      const contents = Array.from(activeSpread.querySelectorAll(".page-content-inner"));
+      if (!contents.length) {
+        return;
+      }
+
+      const currentZoom = parseFloat(getComputedStyle(contents[0]).getPropertyValue("--zoom")) || 1;
+      const zoomFactor = event.deltaY > 0 ? 0.9 : 1.1;
+      const nextZoom = Math.min(3, Math.max(0.5, currentZoom * zoomFactor));
+
+      if (nextZoom === currentZoom) {
+        return;
+      }
+
+      const rect = scroll.getBoundingClientRect();
+      const cursorX = event.clientX - rect.left;
+      const cursorY = event.clientY - rect.top;
+
+      const anchorX = (scroll.scrollLeft + cursorX) / currentZoom;
+      const anchorY = (scroll.scrollTop + cursorY) / currentZoom;
+
+      contents.forEach((content) => {
+        content.style.setProperty("--zoom", nextZoom);
+      });
+
+      scroll.scrollLeft = anchorX * nextZoom - cursorX;
+      scroll.scrollTop = anchorY * nextZoom - cursorY;
+      event.preventDefault();
+    }
+
+    function attachViewportWheelHandlers() {
+      document.querySelectorAll(".page-content").forEach((viewport) => {
+        setViewportZoom(viewport, 1);
+        viewport.addEventListener("wheel", handleViewportWheel, { passive: false });
+      });
+      document.querySelectorAll(".spread-scroll").forEach((scroll) => {
+        scroll.addEventListener("wheel", handleSpreadWheel, { passive: false });
+      });
+    }
+
+    attachViewportWheelHandlers();
+    const twoPageToggle = document.getElementById("two-page-toggle");
+    twoPageToggle.addEventListener("change", (event) => {
+      updateViewMode(event.target.checked);
+    });
+    window.addEventListener("keydown", (event) => {
+      if (event.key === "ArrowLeft" || event.key === "a" || event.key === "A") {
+        event.preventDefault();
+        lastPage();
+      } else if (event.key === "ArrowRight" || event.key === "d" || event.key === "D") {
+        event.preventDefault();
+        nextPage();
+        }
+    });
+    updateViewMode(false);
 </script>
 </body>
 </html>
