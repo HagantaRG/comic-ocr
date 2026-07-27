@@ -89,3 +89,5 @@ http-client.private.env.json
 # ------------------------------------------------------
 /src/test-pics
 /src/outputs
+/test-pics
+/outputs
