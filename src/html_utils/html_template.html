@@ -12,7 +12,8 @@
       min-height: 100vh;
       display: grid;
       place-items: center;
-      padding: 1rem;
+      /* Leave room for the three fixed view controls. */
+      padding: 10rem 1rem 1rem;
       box-sizing: border-box;
       background: #2b2b2b;
       font-family: 'Roboto', sans-serif;
@@ -22,14 +23,10 @@
       display: block;
       place-items: initial;
       overflow-y: auto;
-      padding-top: 3.5rem;
+      padding-top: 10rem;
     }
 
     .view-toggle {
-      position: fixed;
-      top: 0.75rem;
-      left: 0.75rem;
-      z-index: 40;
       display: inline-flex;
       align-items: center;
       gap: 0.5rem;
@@ -42,16 +39,33 @@
       user-select: none;
     }
 
+    .view-controls {
+      position: fixed;
+      top: 0.75rem;
+      left: 0.75rem;
+      right: 0.75rem;
+      z-index: 40;
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
     .view-toggle input {
       margin: 0;
     }
 
     .view-toggle.text-toggle {
-      top: 3.35rem;
+      position: static;
     }
 
     body.show-text-buttons .page .text-btn {
       opacity: 1 !important;
+    }
+
+    body.hide-page-navigation .page-nav,
+    body.hide-page-navigation .spread-nav {
+      display: none !important;
     }
 
     .page{
@@ -205,9 +219,9 @@
       gap: 0;
       align-items: flex-start;
       justify-content: center;
-      width: fit-content;
-      min-width: 100%;
+      width: calc(100% * var(--spread-zoom, 1));
       min-height: 100%;
+      margin: 0 auto;
     }
 
     .page-nav {
@@ -254,7 +268,12 @@
     .page-content-inner {
       position: relative;
       width: calc(100% * var(--zoom, 1));
-      min-width: 100%;
+      margin: 0 auto;
+    }
+
+    body.two-page-mode .page-content-inner {
+      width: 100%;
+      margin: 0;
     }
 
     .page {
@@ -301,22 +320,35 @@
     }
 </style>
 <body>
-    <label class="view-toggle" for="two-page-toggle">
-      <input type="checkbox" id="two-page-toggle">
-      Two-page spread
-    </label>
-    <label class="view-toggle text-toggle" for="text-buttons-toggle">
-      <input type="checkbox" id="text-buttons-toggle">
-      Show text buttons
-    </label>
+    <div class="view-controls">
+      <label class="view-toggle" for="two-page-toggle">
+        <input type="checkbox" id="two-page-toggle">
+        Two-page spread
+      </label>
+      <label class="view-toggle text-toggle" for="text-buttons-toggle">
+        <input type="checkbox" id="text-buttons-toggle">
+        Show text buttons
+      </label>
+      <label class="view-toggle" for="page-navigation-toggle">
+        <input type="checkbox" id="page-navigation-toggle" checked>
+        Show page navigation
+      </label>
+    </div>
     {{BODY}}
 <script>
     function isTwoPageMode() {
       return document.body.classList.contains("two-page-mode");
     }
 
+    let singlePageZoom = 1;
+    let spreadZoom = 1;
+
     function updateTextButtonVisibility(enabled) {
       document.body.classList.toggle("show-text-buttons", enabled);
+    }
+
+    function updatePageNavigationVisibility(enabled) {
+      document.body.classList.toggle("hide-page-navigation", !enabled);
     }
 
     function getPages() {
@@ -384,6 +416,8 @@
         clearActiveSpreads(getSpreads());
         spread.classList.add("active");
       }
+      const viewport = pages[index].querySelector(".page-content");
+      setViewportZoom(viewport, singlePageZoom);
     }
 
     function activateSinglePageByOffset(pages, offset) {
@@ -405,6 +439,10 @@
 
       const spread = spreads[spreadIndex];
       spread.classList.add("active");
+      const spreadContent = spread.querySelector(".spread-content");
+      if (spreadContent) {
+        spreadContent.style.setProperty("--spread-zoom", spreadZoom);
+      }
       spread.querySelectorAll(".page").forEach((page) => {
         page.classList.add("active");
       });
@@ -626,7 +664,7 @@
       if (!content) {
         return;
       }
-      const clampedZoom = Math.min(3, Math.max(0.5, zoom));
+      const clampedZoom = Math.min(3, Math.max(0.25, zoom));
       content.style.setProperty("--zoom", clampedZoom);
       return clampedZoom;
     }
@@ -647,7 +685,7 @@
 
       const currentZoom = parseFloat(getComputedStyle(content).getPropertyValue("--zoom")) || 1;
       const zoomFactor = event.deltaY > 0 ? 0.9 : 1.1;
-      const nextZoom = Math.min(3, Math.max(0.5, currentZoom * zoomFactor));
+      const nextZoom = Math.min(3, Math.max(0.25, currentZoom * zoomFactor));
 
       if (nextZoom === currentZoom) {
         return;
@@ -661,6 +699,7 @@
       const anchorY = (viewport.scrollTop + cursorY) / currentZoom;
 
       setViewportZoom(viewport, nextZoom);
+      singlePageZoom = nextZoom;
       viewport.scrollLeft = anchorX * nextZoom - cursorX;
       viewport.scrollTop = anchorY * nextZoom - cursorY;
 
@@ -678,14 +717,14 @@
         return;
       }
 
-      const contents = Array.from(activeSpread.querySelectorAll(".page-content-inner"));
-      if (!contents.length) {
+      const spreadContent = activeSpread.querySelector(".spread-content");
+      if (!spreadContent) {
         return;
       }
 
-      const currentZoom = parseFloat(getComputedStyle(contents[0]).getPropertyValue("--zoom")) || 1;
+      const currentZoom = parseFloat(getComputedStyle(spreadContent).getPropertyValue("--spread-zoom")) || 1;
       const zoomFactor = event.deltaY > 0 ? 0.9 : 1.1;
-      const nextZoom = Math.min(3, Math.max(0.5, currentZoom * zoomFactor));
+      const nextZoom = Math.min(3, Math.max(0.25, currentZoom * zoomFactor));
 
       if (nextZoom === currentZoom) {
         return;
@@ -698,9 +737,8 @@
       const anchorX = (scroll.scrollLeft + cursorX) / currentZoom;
       const anchorY = (scroll.scrollTop + cursorY) / currentZoom;
 
-      contents.forEach((content) => {
-        content.style.setProperty("--zoom", nextZoom);
-      });
+      spreadContent.style.setProperty("--spread-zoom", nextZoom);
+      spreadZoom = nextZoom;
 
       scroll.scrollLeft = anchorX * nextZoom - cursorX;
       scroll.scrollTop = anchorY * nextZoom - cursorY;
@@ -713,6 +751,10 @@
         viewport.addEventListener("wheel", handleViewportWheel, { passive: false });
       });
       document.querySelectorAll(".spread-scroll").forEach((scroll) => {
+        const spreadContent = scroll.querySelector(".spread-content");
+        if (spreadContent) {
+          spreadContent.style.setProperty("--spread-zoom", 1);
+        }
         scroll.addEventListener("wheel", handleSpreadWheel, { passive: false });
       });
     }
@@ -726,6 +768,10 @@
     textButtonsToggle.addEventListener("change", (event) => {
       updateTextButtonVisibility(event.target.checked);
     });
+    const pageNavigationToggle = document.getElementById("page-navigation-toggle");
+    pageNavigationToggle.addEventListener("change", (event) => {
+      updatePageNavigationVisibility(event.target.checked);
+    });
     window.addEventListener("keydown", (event) => {
       if (event.key === "ArrowLeft" || event.key === "a" || event.key === "A") {
         event.preventDefault();
@@ -737,6 +783,7 @@
     });
     updateViewMode(false);
     updateTextButtonVisibility(false);
+    updatePageNavigationVisibility(pageNavigationToggle.checked);
 </script>
 </body>
 </html>

@@ -1,5 +1,4 @@
 from pathlib import Path
-import svg
 
 HTML_UTILS_FOLDER: Path = Path(__file__).parent
 class Textbox:
