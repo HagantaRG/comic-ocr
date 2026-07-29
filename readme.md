@@ -1,7 +1,17 @@
 # Jelly's Manga Reading Thingy.
+This is my own rendition of the excellent [Mokuro](https://github.com/kha-white/mokuro) project, made mostly just to do it.
+That being said, if you have any suggestions, please give me a heads-up and I will be happy to implement it. Probably.
+
+## Usage
+1. Prepare a folder containing the images you would like to process. As of v.0.0.1 the images in this folder must be named the page number you would like that image to be.
+   (e.g. the PNG image you would like to use as the second page should be titled "2.png")
+   The name of the folder will be the name of the resultant HTML file. (e.g. if your folder is titled "Naruto" the output HTML file will be "Naruto.html" )
+2. Run comic-reader-ocr and enter the "folder" command.
+3. Enter the absolute path of the folder from step 1 and wait for comic-reader-ocr to process all the images.
+4. Once finished, the resulting HTML file will be placed in an outputs folder within the folder from step 1.
+5. Open the resulting HTML using your web browser of choice.
 
 ## FAQs (as decided by Myself)
-
 1. Is this a worse version of various other projects (e.g. [Mokuro](https://github.com/kha-white/mokuro))?
 
    - Yes.
