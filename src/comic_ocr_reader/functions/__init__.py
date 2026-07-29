@@ -1,12 +1,12 @@
-from datetime import datetime, timedelta
+from datetime import datetime
 from pathlib import Path
 
 from PIL import Image
 from easyocr import Reader
 from manga_ocr import MangaOcr
 
-from src.html_utils import Textbox, Page
-from src.img_utils import merge_textboxes_easyocr
+from comic_ocr_reader.html_utils import Textbox, Page
+from comic_ocr_reader.img_utils import merge_textboxes_easyocr
 
 def process_page(
         manga: dict[int, Page],

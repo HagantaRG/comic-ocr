@@ -1,7 +1,7 @@
 import os
 from pathlib import Path
 
-from html_utils import Page, make_html_file
+from comic_ocr_reader.html_utils import Page, make_html_file
 
 folder_path: str = "C:\\Users\\rhaga\\Documents\\test"
 file_list: list[str] = os.listdir(folder_path)
