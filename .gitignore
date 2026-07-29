@@ -92,3 +92,4 @@ http-client.private.env.json
 /test-pics
 /outputs
 /temporary
+/dist

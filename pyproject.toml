@@ -1,0 +1,22 @@
+[build-system]
+requires = ["hatchling >= 1.26"]
+build-backend = "hatchling.build"
+
+[project]
+name = "comic_ocr_reader"
+version = "0.0.1"
+authors = [
+  { name="HRG", email="rhaganta@gmail.com" },
+]
+description = "A Python package made for processing Japanese manga into a format usable with web-based on-screen dictionaries like Yomitan."
+readme = "README.md"
+requires-python = ">=3.9"
+classifiers = [
+    "Programming Language :: Python :: 3",
+    "Operating System :: OS Independent",
+]
+license = "MIT"
+license-files = ["LICENSE.MD"]
+
+[project.urls]
+Homepage = "https://github.com/HagantaRG/comic-ocr"
