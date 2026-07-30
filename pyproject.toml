@@ -24,7 +24,7 @@ classifiers = [
     "Operating System :: OS Independent",
 ]
 license = "MIT"
-license-files = ["LICENSE.MD"]
+license-files = ["LICENSE.md"]
 
 [project.urls]
 Homepage = "https://github.com/HagantaRG/comic-ocr"
