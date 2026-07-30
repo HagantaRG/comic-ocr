@@ -23,7 +23,7 @@ def process_page(
 
         count: int = 0
         page: Page = Page(
-            img_filepath=f"{filepath}",
+            img_filepath=f"{filepath.stem}{filepath.suffix}",
             page_num=page_num,
             page_class="page"
         )
