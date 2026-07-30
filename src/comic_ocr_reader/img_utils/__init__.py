@@ -1,5 +1,3 @@
-import numpy as np
-
 def __compare_regions(
         r1: list[int],
         r2: list[int],
