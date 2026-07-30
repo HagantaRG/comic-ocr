@@ -4,13 +4,21 @@ build-backend = "hatchling.build"
 
 [project]
 name = "comic_ocr_reader"
-version = "0.0.1"
+version = "0.0.5"
 authors = [
   { name="HRG", email="rhaganta@gmail.com" },
 ]
 description = "A Python package made for processing Japanese manga into a format usable with web-based on-screen dictionaries like Yomitan."
 readme = "README.md"
 requires-python = ">=3.9"
+dependencies = [
+  "easyocr~=1.7.2",
+  "pillow~=12.3.0",
+  "numpy~=2.5.1",
+  "manga-ocr",
+  "tqdm",
+  "loguru",
+]
 classifiers = [
     "Programming Language :: Python :: 3",
     "Operating System :: OS Independent",
