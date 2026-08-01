@@ -4,7 +4,7 @@ build-backend = "hatchling.build"
 
 [project]
 name = "comic_ocr_reader"
-version = "0.0.5"
+version = "1.0.3"
 authors = [
   { name="HRG", email="rhaganta@gmail.com" },
 ]
