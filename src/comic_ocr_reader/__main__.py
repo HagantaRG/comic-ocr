@@ -9,6 +9,7 @@ from manga_ocr import MangaOcr
 
 from comic_ocr_reader.html_utils import Page, make_html_file
 from comic_ocr_reader.functions import process_page
+from comic_ocr_reader.functions.model_init import ensure_models_initialised
 
 VALID_EXTENSIONS: Final[list[str]] = [
         "jpg",
@@ -18,6 +19,14 @@ VALID_EXTENSIONS: Final[list[str]] = [
         "tiff"
 ]
 logger.disable("manga_ocr")
+
+
+def print_main_menu() -> None:
+    print(
+        'Hello! Please type in "help" to see a list of commands. '
+        'Otherwise, please type in a valid command.'
+    )
+
 
 def main(
         folder_path: str,
@@ -45,12 +54,19 @@ def main(
         print("One of the image files in the folder you have entered has a non-integer name. (e.g. 123abc.jpeg instead of 123.jpeg)\n"
               "All image files within the folder *must* have an integer name for ordering purposes.")
         return False
+
+    print("=== Initialisation ===")
+    ensure_models_initialised()
+
+    print("=== OCR setup ===")
     detector = Reader(
         lang_list=['ja'],
         recognizer=False,
         gpu=True
     )
     recogniser = MangaOcr()
+
+    print("=== OCR processing ===")
     for file in tqdm(images):
         page_num += 1
         process_page(
@@ -67,38 +83,41 @@ def main(
         f.flush()
     return True
 
-if __name__ == "__main__":
+
+def run() -> None:
     while True:
         try:
-            user_input: str = input(
-                f"Hello! Please type in \"help\" to see a list of commands. Otherwise, please type in a valid command.\n"
-            )
-            user_input = user_input.strip()
+            print_main_menu()
+            user_input: str = input().strip()
             match user_input:
                 case "help":
                     print(
                         """
         The valid commands are:
-        - folder 
+        - folder
             Allows you to specify a folder containing the image files for the manga you want to process.
             Also optionally allows you to give the manga a name. Otherwise the folder name will be used.
-            Supported file formats for images in folder: .jpg, .jpeg, .png, .bmp, .tiff 
-        And of course, 
-        - help 
-        Which you are currently using.
+            Supported file formats for images in folder: .jpg, .jpeg, .png, .bmp, .tiff
+        And of course,
+        - help
+            Which you are currently using.
                         """
                     )
                 case "folder":
                     target_folder: str = input("Please input a target folder.\n")
                     if os.path.isdir(target_folder):
                         if main(target_folder):
-                            print("Success! Please press Ctrl+C to exit.")
+                            print("Success! Returning to the main menu.")
                         else:
-                            print("Something went wrong.")
+                            print("Something went wrong. Returning to the main menu.")
                     else:
-                        print("Please input a valid folder.")
+                        print("Please input a valid folder. Returning to the main menu.")
                 case _:
-                    print("That was not a valid command.")
+                    print("That was not a valid command. Returning to the main menu.")
         except KeyboardInterrupt:
             print("\nGoodbye!")
-            exit(0)
+            return
+
+
+if __name__ == "__main__":
+    run()
