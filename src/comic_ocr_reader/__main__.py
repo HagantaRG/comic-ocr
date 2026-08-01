@@ -88,7 +88,7 @@ def run() -> None:
     while True:
         try:
             print_main_menu()
-            user_input: str = input().strip()
+            user_input: str = input().strip().lower()
             match user_input:
                 case "help":
                     print(
