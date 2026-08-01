@@ -8,11 +8,11 @@ pip install comic-ocr-reader
 ```
 Once that it is installed (it may take some time, there are large dependencies in there) you should then run:
 ```
-comic-ocr-reader
+comic_ocr_reader
 ```
 Or if that doesn't work:
 ```
-python3 -m comic-ocr-reader
+python3 -m comic_ocr_reader
 ```
 ## Usage
 1. Prepare a folder containing the images you would like to process. As of v.0.0.1 the images in this folder must be named the page number you would like that image to be.
